@@ -21,8 +21,8 @@ const Index = () => {
       <NavBar />
       <div className="container mx-auto px-4 py-8">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-white">钻井智能监控系统</h1>
-          <p className="text-slate-400 mt-2">顶驱钻井故障监控系统</p>
+          <h1 className="text-3xl font-bold text-white">北航钻井智能监控系统</h1>
+          <p className="text-slate-400 mt-2">顶驱钻井故障监控系统 杨秉怡/王宇堃/王怡钧</p>
         </header>
         
         <Tabs defaultValue="dashboard" className="w-full">
