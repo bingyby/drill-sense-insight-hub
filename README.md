@@ -1,211 +1,175 @@
 
-# DrillSense Insight Hub - 钻井监控系统
+# DrillSense Insight Hub - 钻井智能监控系统
 
-## 系统简介 (System Introduction)
+## 系统概述 (System Overview)
 
-DrillSense Insight Hub 是一个顶驱钻井故障监控系统，提供实时数据监控、数字孪生技术和故障预测分析。
+DrillSense Insight Hub 是一个用于顶驱钻井设备监控的智能系统，提供实时数据监测、数字孪生、声音分析、故障预测和历史数据分析等功能。
 
-DrillSense Insight Hub is a top drive drilling fault monitoring system that provides real-time data monitoring, digital twin technology, and fault prediction analysis.
+DrillSense Insight Hub is an intelligent monitoring system for top drive drilling equipment, providing real-time data monitoring, digital twin visualization, sound analysis, fault prediction, and historical data analysis.
 
 ## API 使用指南 (API Usage Guide)
 
-### 发送数据到系统 (Sending Data to the System)
+### 数据接口 (Data Interfaces)
 
-您可以通过 RESTful API 发送数据到监控系统。以下是 API 接口说明：
+系统通过以下API接口获取数据：
 
-You can send data to the monitoring system through a RESTful API. Here's the API specification:
+1. **系统状态数据 (System Status Data)**
+   - 端点 (Endpoint): `/api/system-status`
+   - 方法 (Method): GET
+   - 返回格式 (Response Format):
+   ```json
+   {
+     "systemStatus": "正常 (Normal)",
+     "operationalHours": 2547,
+     "lastMaintenance": "2023-04-15",
+     "nextScheduledMaintenance": "2023-07-15",
+     "currentLoad": 75,
+     "alerts": []
+   }
+   ```
 
-#### 端点 (Endpoint)
+2. **振动和温度数据 (Vibration and Temperature Data)**
+   - 端点 (Endpoint): `/api/vibration-temperature`
+   - 方法 (Method): GET
+   - 返回格式 (Response Format):
+   ```json
+   {
+     "mainBearingTemp": 68.5,
+     "mainBearingTempStatus": "正常 (Normal)",
+     "crossheadTemp": 72.3,
+     "crossheadTempStatus": "正常 (Normal)",
+     "vibrationLevel": "0.45",
+     "vibrationStatus": "正常 (Normal)",
+     "vibrationData": [
+       { "name": "主轴承 (Main Bearing)", "value": 0.45, "threshold": 0.8 },
+       { "name": "齿轮箱 (Gearbox)", "value": 0.32, "threshold": 0.7 },
+       { "name": "电机 (Motor)", "value": 0.28, "threshold": 0.75 },
+       { "name": "转盘 (Rotary Table)", "value": 0.22, "threshold": 0.65 }
+     ]
+   }
+   ```
 
-```
-POST /api/sensor-data
-```
+3. **声音监测数据 (Sound Monitoring Data)**
+   - 端点 (Endpoint): `/api/sound-data`
+   - 方法 (Method): GET
+   - 返回格式 (Response Format):
+   ```json
+   {
+     "soundLevel": 75,
+     "soundStatus": "正常 (Normal)",
+     "frequencySpectrum": [
+       { "frequency": "低频 (Low)", "value": 68 },
+       { "frequency": "中频 (Medium)", "value": 72 },
+       { "frequency": "高频 (High)", "value": 65 }
+     ]
+   }
+   ```
 
-#### 请求体格式 (Request Body Format)
+4. **故障预测 (Defect Prediction)**
+   - 端点 (Endpoint): `/api/defect-predictions`
+   - 方法 (Method): POST
+   - 请求体 (Request Body):
+   ```json
+   {
+     "soundLevel": 87,
+     "vibrationLevel": 0.65,
+     "temperature": 78,
+     "operationalHours": 2547
+   }
+   ```
+   - 返回格式 (Response Format):
+   ```json
+   {
+     "predictions": [
+       {
+         "component": "主轴承 (Main Bearing)",
+         "defectType": "轴承磨损 (Bearing Wear)",
+         "probability": 0.65,
+         "timeToFailure": "7-14天 (7-14 days)",
+         "recommendedAction": "更换轴承或加强润滑 (Replace bearings or enhance lubrication)"
+       },
+       {
+         "component": "传动齿轮 (Transmission Gears)",
+         "defectType": "齿轮咬合不良 (Poor Gear Meshing)",
+         "probability": 0.42,
+         "timeToFailure": "14-21天 (14-21 days)",
+         "recommendedAction": "检查齿轮对准和磨损 (Check gear alignment and wear)"
+       }
+     ]
+   }
+   ```
 
-```json
-{
-  "timestamp": "2023-09-15T08:30:00Z",
-  "systemStatus": {
-    "status": "operational", // "operational", "warning", or "critical"
-    "motorStatus": true,
-    "hydraulicStatus": true,
-    "controlSystemStatus": true,
-    "sensorNetworkStatus": true
-  },
-  "hydraulicSystem": {
-    "pressure": 2500, // PSI
-    "pressureStatus": "normal", // "normal" or "warning"
-    "flowRate": 85, // Gallons per minute
-    "flowRateStatus": "normal", // "normal" or "warning"
-    "temperature": 65, // Celsius
-    "oilLevel": 95 // Percentage
-  },
-  "vibrationTemperature": {
-    "mainBearingTemp": 65, // Celsius
-    "mainBearingTempStatus": "normal", // "normal" or "warning"
-    "crossheadTemp": 58, // Celsius
-    "crossheadTempStatus": "normal", // "normal" or "warning"
-    "vibrationLevel": 3.2, // mm/s
-    "vibrationStatus": "normal", // "normal" or "warning"
-    "soundLevel": 82, // dB (Sound decibel level)
-    "soundStatus": "normal", // "normal" or "warning"
-    "vibrationData": [
-      {
-        "name": "主电机",
-        "value": 2.8,
-        "threshold": 5.0
-      },
-      {
-        "name": "齿轮箱",
-        "value": 3.2,
-        "threshold": 6.0
-      },
-      {
-        "name": "轴承",
-        "value": 1.9,
-        "threshold": 4.0
-      },
-      {
-        "name": "电动滑块",
-        "value": 2.4,
-        "threshold": 5.5
-      }
-    ]
-  },
-  "electricalParameters": {
-    "mainMotorVoltage": 480, // Volts
-    "mainMotorCurrent": 125, // Amps
-    "mainMotorPower": 85, // kW
-    "auxiliaryVoltage": 240, // Volts
-    "auxiliaryCurrent": 45, // Amps
-    "groundFaultStatus": "normal" // "normal" or "fault"
-  },
-  "operationalCommands": {
-    "drillSpeed": 120, // RPM
-    "torqueLimit": 80, // Percentage
-    "weightOnBit": 25, // Tons
-    "mode": "automatic", // "automatic" or "manual"
-    "direction": "forward" // "forward", "reverse", or "locked"
-  },
-  "environmentalData": {
-    "ambientTemperature": 32, // Celsius
-    "humidity": 65, // Percentage
-    "windSpeed": 15, // km/h
-    "precipitation": "none" // "none", "light", "moderate", "heavy"
-  },
-  "alerts": {
-    "total": 2,
-    "critical": 0,
-    "warning": 2,
-    "info": 0,
-    "recentAlerts": [
-      {
-        "id": "ALT-2023-092",
-        "type": "warning",
-        "component": "Hydraulic System",
-        "message": "Pressure fluctuation detected",
-        "timestamp": "2023-09-15T07:45:00Z"
-      },
-      {
-        "id": "ALT-2023-091",
-        "type": "warning",
-        "component": "Vibration",
-        "message": "Increased vibration in gearbox",
-        "timestamp": "2023-09-15T07:30:00Z"
-      }
-    ]
-  },
-  "defectPredictions": {
-    "predictions": [
-      {
-        "component": "主轴承",
-        "defectType": "过热",
-        "probability": 0.15,
-        "timeToFailure": "45 天",
-        "recommendedAction": "计划维护检查"
-      },
-      {
-        "component": "液压系统",
-        "defectType": "泄漏",
-        "probability": 0.08,
-        "timeToFailure": "60 天",
-        "recommendedAction": "常规监控"
-      },
-      {
-        "component": "齿轮箱",
-        "defectType": "异常磨损",
-        "probability": 0.25,
-        "timeToFailure": "30 天",
-        "recommendedAction": "检查润滑状态"
-      }
-    ]
-  }
-}
-```
+### 发送消息到系统 (Sending Messages to the System)
 
-#### 响应 (Response)
+要发送控制命令或警报确认消息到系统：
 
-```json
-{
-  "status": "success",
-  "message": "数据接收成功 (Data received successfully)",
-  "timestamp": "2023-09-15T08:30:05Z"
-}
-```
+1. **设备控制命令 (Equipment Control Commands)**
+   - 端点 (Endpoint): `/api/control-command`
+   - 方法 (Method): POST
+   - 请求体 (Request Body):
+   ```json
+   {
+     "command": "停止旋转 (Stop Rotation)",
+     "parameters": {
+       "speed": 0,
+       "torque": 0
+     },
+     "priority": "高 (High)",
+     "source": "操作员 (Operator)",
+     "timestamp": "2023-06-15T08:45:22Z"
+   }
+   ```
+   - 返回格式 (Response Format):
+   ```json
+   {
+     "status": "已接收 (Received)",
+     "commandId": "cmd-12345",
+     "estimatedExecutionTime": "2023-06-15T08:45:25Z"
+   }
+   ```
 
-### 错误代码 (Error Codes)
+2. **警报确认 (Alert Acknowledgment)**
+   - 端点 (Endpoint): `/api/acknowledge-alert`
+   - 方法 (Method): POST
+   - 请求体 (Request Body):
+   ```json
+   {
+     "alertId": "alt-7890",
+     "acknowledgedBy": "张工程师 (Engineer Zhang)",
+     "timestamp": "2023-06-15T09:12:45Z",
+     "notes": "已检查并解决问题 (Checked and resolved the issue)"
+   }
+   ```
+   - 返回格式 (Response Format):
+   ```json
+   {
+     "status": "已确认 (Acknowledged)",
+     "alertStatus": "已关闭 (Closed)"
+   }
+   ```
 
-| 代码 (Code) | 描述 (Description)                         |
-|------------|------------------------------------------|
-| 400        | 请求格式错误 (Bad request format)            |
-| 401        | 未授权 (Unauthorized)                     |
-| 500        | 服务器内部错误 (Internal server error)       |
+## 故障预测算法 (Defect Prediction Algorithm)
 
-### 认证 (Authentication)
+系统使用多种数据源进行故障预测，包括：
 
-所有 API 请求需要在 Header 中包含 API 密钥：
+1. 声音分析 (Sound Analysis)
+2. 振动监测 (Vibration Monitoring)
+3. 温度监测 (Temperature Monitoring)
+4. 运行时间 (Operational Hours)
 
-All API requests must include an API key in the header:
+系统将这些数据输入到预测模型中，计算出各组件可能出现故障的概率和预计故障时间，并提供相应的维护建议。
 
-```
-Authorization: Bearer YOUR_API_KEY
-```
+## 系统要求 (System Requirements)
 
-## 数据周期 (Data Frequency)
+- 现代网络浏览器 (Modern Web Browser): Chrome, Firefox, Safari, Edge
+- 最低分辨率 (Minimum Resolution): 1280x720
+- 网络连接 (Network Connection): 稳定的互联网连接 (Stable Internet Connection)
 
-建议按照以下频率发送数据：
+## 联系方式 (Contact Information)
 
-The recommended frequency for sending data is:
+如有任何问题或建议，请联系系统管理员：
 
-- 关键参数 (Critical parameters): 每 5 秒 (Every 5 seconds)
-- 标准参数 (Standard parameters): 每 30 秒 (Every 30 seconds)
-- 环境参数 (Environmental parameters): 每 5 分钟 (Every 5 minutes)
+For any questions or suggestions, please contact the system administrator:
 
-## 故障预测算法 (Fault Prediction Algorithm)
-
-系统使用多种模型来预测可能的设备故障：
-
-The system uses various models to predict possible equipment failures:
-
-1. 基于规则的阈值监测 (Rule-based threshold monitoring)
-2. 统计异常检测 (Statistical anomaly detection)
-3. 机器学习模型 (Machine learning models)
-4. 基于声音分析的故障预测 (Sound-based fault prediction)
-
-每个预测都包含故障类型、发生概率和预计发生时间，以便及时采取预防措施。
-
-Each prediction includes the fault type, probability of occurrence, and estimated time of occurrence to allow timely preventive measures.
-
-## 联系支持 (Contact Support)
-
-如果您有任何问题或需要支持，请联系：
-
-If you have any questions or need support, please contact:
-
-📧 support@drillsense.com  
-📞 +86-10-12345678
-
----
-
-© 2023 DrillSense Technology Co., Ltd. 保留所有权利 (All rights reserved)
+- 邮箱 (Email): support@drillsense.com
+- 电话 (Phone): +86 10 12345678

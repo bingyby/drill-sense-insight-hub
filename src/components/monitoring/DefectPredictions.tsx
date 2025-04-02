@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { AlertTriangle, Check, Clock, Tool, BarChart2 } from "lucide-react";
+import { AlertTriangle, Check, Clock, Wrench, BarChart2 } from "lucide-react";
 
 interface DefectPrediction {
   component: string;
@@ -81,7 +81,7 @@ export function DefectPredictions({ predictions }: DefectPredictionsProps) {
               <div className="space-y-1">
                 <div className="text-sm text-muted-foreground">建议措施 (Recommended Action)</div>
                 <div className="flex items-center">
-                  <Tool className="h-4 w-4 mr-2 text-purple-500" />
+                  <Wrench className="h-4 w-4 mr-2 text-purple-500" />
                   <span>{prediction.recommendedAction}</span>
                 </div>
               </div>
