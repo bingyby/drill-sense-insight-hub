@@ -12,11 +12,13 @@ import { SoundMonitoring } from "@/components/monitoring/SoundMonitoring";
 import { useEffect, useState } from "react";
 import { generateMockData } from "@/lib/mock-data";
 import { predictDefects } from "@/lib/defect-predictor";
+import { getSoundData } from "@/lib/sound-data";
 import { Activity, AlertTriangle, Gauge, ThermometerSnowflake, Volume2 } from "lucide-react";
 
 const Dashboard = () => {
   const [data, setData] = useState(generateMockData());
   const [defectPredictions, setDefectPredictions] = useState(predictDefects(data));
+  const [soundData, setSoundData] = useState(getSoundData());
   
   // Simulate real-time data updates
   useEffect(() => {
@@ -24,6 +26,7 @@ const Dashboard = () => {
       const newData = generateMockData();
       setData(newData);
       setDefectPredictions(predictDefects(newData));
+      setSoundData(getSoundData());
     }, 5000);
     
     return () => clearInterval(interval);
@@ -35,14 +38,18 @@ const Dashboard = () => {
     status: data.systemStatus.status as "operational" | "warning" | "critical"
   };
 
-  // Ensure vibrationLevel is a number and add sound data
+  // Create properly typed data for sound monitoring
+  const soundMonitoringData = {
+    soundLevel: soundData.soundLevel,
+    soundStatus: soundData.soundStatus
+  };
+
+  // Ensure vibrationLevel is a number
   const vibrationTemperatureData = {
     ...data.vibrationTemperature,
     vibrationLevel: typeof data.vibrationTemperature.vibrationLevel === 'string' 
       ? parseFloat(data.vibrationTemperature.vibrationLevel) 
-      : data.vibrationTemperature.vibrationLevel,
-    soundLevel: data.vibrationTemperature.soundLevel || Math.floor(Math.random() * 20) + 70, // 70-90 dB if not present
-    soundStatus: data.vibrationTemperature.soundStatus || (Math.random() > 0.8 ? "warning" : "normal")
+      : data.vibrationTemperature.vibrationLevel
   };
 
   return (
@@ -120,7 +127,7 @@ const Dashboard = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <SoundMonitoring data={vibrationTemperatureData} />
+          <SoundMonitoring data={soundMonitoringData} />
         </CardContent>
       </Card>
       

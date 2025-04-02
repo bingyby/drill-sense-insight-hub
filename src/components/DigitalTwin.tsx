@@ -1,8 +1,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { generateMockData } from "@/lib/mock-data";
+import DrillModel3D from "./DrillModel3D";
+import { Wrench, Gauge, Thermometer, Activity } from "lucide-react";
 
 const DigitalTwin = () => {
   const [data, setData] = useState(generateMockData());
@@ -21,75 +22,110 @@ const DigitalTwin = () => {
       <div className="grid grid-cols-1 gap-6">
         <Card className="border border-slate-800">
           <CardHeader>
-            <CardTitle>Top Drive Digital Twin</CardTitle>
+            <CardTitle className="flex items-center">
+              <Wrench className="mr-2 h-5 w-5" />
+              钻井设备数字孪生 (Top Drive Digital Twin)
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="aspect-video bg-slate-800 rounded-md flex items-center justify-center">
-              <div className="text-center p-8">
-                <div className="flex flex-col items-center">
-                  <div className="w-96 h-96 relative">
-                    {/* Simplified Digital Twin Visualization */}
-                    <div className="absolute inset-0 border-4 border-slate-700 rounded-lg"></div>
-                    
-                    {/* Top Section (Motor) */}
-                    <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-40 h-24 bg-slate-600 rounded-md flex items-center justify-center">
-                      <span className="text-xs">Motor Assembly</span>
-                      
-                      {/* Status indicator */}
-                      <div className={`absolute top-2 right-2 w-4 h-4 rounded-full ${
-                        data.motorStatus === "running" ? "bg-green-500" : "bg-red-500"
-                      }`}></div>
-                    </div>
-                    
-                    {/* Central Shaft */}
-                    <div className="absolute top-32 left-1/2 transform -translate-x-1/2 w-8 h-56 bg-slate-500"></div>
-                    
-                    {/* Main Gear Box */}
-                    <div className="absolute top-40 left-1/2 transform -translate-x-1/2 w-56 h-32 bg-slate-600 rounded-md flex items-center justify-center">
-                      <span className="text-xs">Gearbox</span>
-                      
-                      {/* Status indicator */}
-                      <div className={`absolute top-2 right-2 w-4 h-4 rounded-full ${
-                        data.hydraulicSystem.pressureStatus === "normal" ? "bg-green-500" : "bg-yellow-500"
-                      }`}></div>
-                    </div>
-                    
-                    {/* Hydraulic System */}
-                    <div className="absolute top-48 left-3/4 w-16 h-20 bg-slate-700 rounded-md flex items-center justify-center">
-                      <span className="text-xs text-center">Hydraulic System</span>
-                    </div>
-                    
-                    {/* Bottom Connection */}
-                    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-24 h-16 bg-slate-600 rounded-md flex items-center justify-center">
-                      <span className="text-xs">Drill Connection</span>
-                    </div>
-                    
-                    {/* Sensor Points */}
-                    <div className="absolute top-20 left-1/4 w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
-                    <div className="absolute top-56 left-1/4 w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
-                    <div className="absolute top-36 right-1/4 w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
-                    <div className="absolute bottom-20 right-1/4 w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
-                  </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2">
+                <DrillModel3D data={{
+                  motorStatus: data.systemStatus.motorStatus,
+                  hydraulicPressure: data.hydraulicSystem.pressure,
+                  mainBearingTemp: data.vibrationTemperature.mainBearingTemp,
+                  vibrationLevel: typeof data.vibrationTemperature.vibrationLevel === 'string' 
+                    ? parseFloat(data.vibrationTemperature.vibrationLevel) 
+                    : data.vibrationTemperature.vibrationLevel
+                }} />
+              </div>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Card>
+                    <CardHeader className="p-3">
+                      <CardTitle className="text-sm flex items-center">
+                        <Activity className="w-4 h-4 mr-1" />
+                        电机状态 (Motor Status)
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-3 pt-0">
+                      <div className="text-xl font-bold">{data.systemStatus.motorStatus ? "运行中 (Online)" : "停机 (Offline)"}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="p-3">
+                      <CardTitle className="text-sm flex items-center">
+                        <Gauge className="w-4 h-4 mr-1" />
+                        液压压力 (Hydraulic)
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-3 pt-0">
+                      <div className="text-xl font-bold">{data.hydraulicSystem.pressure} PSI</div>
+                    </CardContent>
+                  </Card>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                  <div className="bg-slate-700 p-4 rounded-md">
-                    <h3 className="text-sm font-medium mb-1">Motor Status</h3>
-                    <p className="text-xl font-bold">{data.systemStatus.motorStatus ? "Online" : "Offline"}</p>
-                  </div>
-                  <div className="bg-slate-700 p-4 rounded-md">
-                    <h3 className="text-sm font-medium mb-1">Hydraulic Pressure</h3>
-                    <p className="text-xl font-bold">{data.hydraulicSystem.pressure} PSI</p>
-                  </div>
-                  <div className="bg-slate-700 p-4 rounded-md">
-                    <h3 className="text-sm font-medium mb-1">Main Bearing Temp</h3>
-                    <p className="text-xl font-bold">{data.vibrationTemperature.mainBearingTemp}°C</p>
-                  </div>
-                  <div className="bg-slate-700 p-4 rounded-md">
-                    <h3 className="text-sm font-medium mb-1">Vibration Level</h3>
-                    <p className="text-xl font-bold">{data.vibrationTemperature.vibrationLevel} mm/s</p>
-                  </div>
-                </div>
+                <Card>
+                  <CardHeader className="p-3">
+                    <CardTitle className="text-sm flex items-center">
+                      <Thermometer className="w-4 h-4 mr-1" />
+                      轴承温度 (Bearing Temp)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 pt-0">
+                    <div className="text-xl font-bold">{data.vibrationTemperature.mainBearingTemp}°C</div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="p-3">
+                    <CardTitle className="text-sm">组件健康状况 (Component Health)</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 pt-0">
+                    <ul className="space-y-2">
+                      <li className="flex justify-between items-center">
+                        <span>顶驱 (Top Drive)</span>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          data.componentHealth.motor > 80 ? "bg-green-500/20 text-green-500" : 
+                          data.componentHealth.motor > 60 ? "bg-yellow-500/20 text-yellow-500" : 
+                          "bg-red-500/20 text-red-500"
+                        }`}>
+                          {data.componentHealth.motor}%
+                        </span>
+                      </li>
+                      <li className="flex justify-between items-center">
+                        <span>井架 (Derrick)</span>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          data.componentHealth.gearbox > 80 ? "bg-green-500/20 text-green-500" : 
+                          data.componentHealth.gearbox > 60 ? "bg-yellow-500/20 text-yellow-500" : 
+                          "bg-red-500/20 text-red-500"
+                        }`}>
+                          {data.componentHealth.gearbox}%
+                        </span>
+                      </li>
+                      <li className="flex justify-between items-center">
+                        <span>泥浆泵 (Mud Pump)</span>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          data.componentHealth.hydraulic > 80 ? "bg-green-500/20 text-green-500" : 
+                          data.componentHealth.hydraulic > 60 ? "bg-yellow-500/20 text-yellow-500" : 
+                          "bg-red-500/20 text-red-500"
+                        }`}>
+                          {data.componentHealth.hydraulic}%
+                        </span>
+                      </li>
+                      <li className="flex justify-between items-center">
+                        <span>绞车 (Drawworks)</span>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          data.componentHealth.bearings > 80 ? "bg-green-500/20 text-green-500" : 
+                          data.componentHealth.bearings > 60 ? "bg-yellow-500/20 text-yellow-500" : 
+                          "bg-red-500/20 text-red-500"
+                        }`}>
+                          {data.componentHealth.bearings}%
+                        </span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </CardContent>
@@ -98,74 +134,24 @@ const DigitalTwin = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Component Health</CardTitle>
+              <CardTitle className="text-sm">操作参数 (Operating Parameters)</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
                 <li className="flex justify-between items-center">
-                  <span>Motor Assembly</span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    data.componentHealth.motor > 80 ? "bg-green-500/20 text-green-500" : 
-                    data.componentHealth.motor > 60 ? "bg-yellow-500/20 text-yellow-500" : 
-                    "bg-red-500/20 text-red-500"
-                  }`}>
-                    {data.componentHealth.motor}%
-                  </span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span>Gearbox</span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    data.componentHealth.gearbox > 80 ? "bg-green-500/20 text-green-500" : 
-                    data.componentHealth.gearbox > 60 ? "bg-yellow-500/20 text-yellow-500" : 
-                    "bg-red-500/20 text-red-500"
-                  }`}>
-                    {data.componentHealth.gearbox}%
-                  </span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span>Hydraulic System</span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    data.componentHealth.hydraulic > 80 ? "bg-green-500/20 text-green-500" : 
-                    data.componentHealth.hydraulic > 60 ? "bg-yellow-500/20 text-yellow-500" : 
-                    "bg-red-500/20 text-red-500"
-                  }`}>
-                    {data.componentHealth.hydraulic}%
-                  </span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span>Bearings</span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    data.componentHealth.bearings > 80 ? "bg-green-500/20 text-green-500" : 
-                    data.componentHealth.bearings > 60 ? "bg-yellow-500/20 text-yellow-500" : 
-                    "bg-red-500/20 text-red-500"
-                  }`}>
-                    {data.componentHealth.bearings}%
-                  </span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm">Operating Parameters</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                <li className="flex justify-between items-center">
-                  <span>Torque</span>
+                  <span>扭矩 (Torque)</span>
                   <span>{data.operationalCommands.torque} kNm</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span>RPM</span>
+                  <span>转速 (RPM)</span>
                   <span>{data.operationalCommands.rpm}</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span>Weight on Bit</span>
+                  <span>钻压 (Weight on Bit)</span>
                   <span>{data.operationalCommands.wob} ton</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span>Flow Rate</span>
+                  <span>泥浆流量 (Flow Rate)</span>
                   <span>{data.hydraulicSystem.flowRate} gpm</span>
                 </li>
               </ul>
@@ -174,7 +160,25 @@ const DigitalTwin = () => {
           
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">System Efficiency</CardTitle>
+              <CardTitle className="text-sm">振动数据 (Vibration Data)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2">
+                {data.vibrationTemperature.vibrationData.map((item, index) => (
+                  <li key={index} className="flex justify-between items-center">
+                    <span>{item.name}</span>
+                    <span className={item.value > item.threshold ? "text-red-500" : "text-green-500"}>
+                      {item.value} mm/s
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">系统效率 (System Efficiency)</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center h-full">
