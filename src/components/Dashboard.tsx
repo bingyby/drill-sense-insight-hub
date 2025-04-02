@@ -60,7 +60,7 @@ const Dashboard = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center">
               <Activity className="w-4 h-4 mr-2" />
-              系统状态 (System Status)
+              系统状态
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -72,14 +72,14 @@ const Dashboard = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center">
               <Gauge className="w-4 h-4 mr-2" />
-              液压压力 (Hydraulic Pressure)
+              液压压力
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.hydraulicSystem.pressure} PSI</div>
             <p className="text-xs text-muted-foreground">
               {data.hydraulicSystem.pressureStatus === "normal" 
-                ? "运行正常 (Operating normally)" 
+                ? "运行正常" 
                 : "警告: 压力异常 (Warning: Pressure irregular)"}
             </p>
           </CardContent>
@@ -89,14 +89,14 @@ const Dashboard = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center">
               <ThermometerSnowflake className="w-4 h-4 mr-2" />
-              主轴承温度 (Main Bearing Temp)
+              主轴承温度
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.vibrationTemperature.mainBearingTemp}°C</div>
             <p className="text-xs text-muted-foreground">
               {data.vibrationTemperature.mainBearingTempStatus === "normal" 
-                ? "正常范围内 (Within normal range)" 
+                ? "正常范围内" 
                 : "警告: 温度升高 (Warning: Temperature elevated)"}
             </p>
           </CardContent>
@@ -106,7 +106,7 @@ const Dashboard = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center">
               <AlertTriangle className="w-4 h-4 mr-2" />
-              活动警报 (Active Alerts)
+              活动警报
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -124,7 +124,7 @@ const Dashboard = () => {
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center">
             <Volume2 className="w-4 h-4 mr-2" />
-            声音监控 (Sound Monitoring)
+            声音监控
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -134,12 +134,12 @@ const Dashboard = () => {
       
       <Tabs defaultValue="hydraulic">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
-          <TabsTrigger value="hydraulic">液压 (Hydraulic)</TabsTrigger>
-          <TabsTrigger value="vibration">振动/温度 (Vibration/Temp)</TabsTrigger>
-          <TabsTrigger value="electrical">电气 (Electrical)</TabsTrigger>
-          <TabsTrigger value="operational">操作 (Operations)</TabsTrigger>
-          <TabsTrigger value="environmental">环境 (Environmental)</TabsTrigger>
-          <TabsTrigger value="defects">故障预测 (Defect Predictions)</TabsTrigger>
+          <TabsTrigger value="hydraulic">液压</TabsTrigger>
+          <TabsTrigger value="vibration">振动/温度</TabsTrigger>
+          <TabsTrigger value="electrical">电气</TabsTrigger>
+          <TabsTrigger value="operational">操作</TabsTrigger>
+          <TabsTrigger value="environmental">环境</TabsTrigger>
+          <TabsTrigger value="defects">故障预测</TabsTrigger>
         </TabsList>
         
         <TabsContent value="hydraulic" className="mt-4">
