@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
-import { Check, AlertTriangle, Volume2, AlertCircle, ThermometerHot, Droplets } from "lucide-react";
+import { Check, AlertTriangle, Volume2, AlertCircle, Thermometer, Droplets } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const EmailNotifications = () => {
@@ -144,7 +143,7 @@ const EmailNotifications = () => {
               
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <ThermometerHot className="h-4 w-4 text-slate-400" />
+                  <Thermometer className="h-4 w-4 text-slate-400" />
                   <Label htmlFor="temperature-alerts" className="text-sm">温度异常</Label>
                 </div>
                 <Switch 
