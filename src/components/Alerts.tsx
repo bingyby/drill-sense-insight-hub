@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { generateMockAlerts } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface Alert {
   id: string;
@@ -30,8 +30,8 @@ const Alerts = () => {
         setAlerts(prev => [...newAlerts, ...prev]);
         
         toast({
-          title: "New Alert Detected",
-          description: `${newAlerts[0].severity.toUpperCase()}: ${newAlerts[0].message}`,
+          title: "新警报",
+          description: `${getSeverityText(newAlerts[0].severity)}: ${newAlerts[0].message}`,
           variant: newAlerts[0].severity === "critical" ? "destructive" : "default",
         });
       }
@@ -48,9 +48,19 @@ const Alerts = () => {
     );
     
     toast({
-      title: "Alert Acknowledged",
-      description: "The alert has been acknowledged and added to the log.",
+      title: "警报已确认",
+      description: "该警报已被确认并添加到日志中。",
     });
+  };
+
+  // Helper function to convert severity to Chinese
+  const getSeverityText = (severity: string): string => {
+    switch (severity) {
+      case "critical": return "危急";
+      case "warning": return "警告";
+      case "info": return "信息";
+      default: return severity;
+    }
   };
 
   return (
@@ -58,7 +68,7 @@ const Alerts = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium">Critical Alerts</CardTitle>
+            <CardTitle className="text-md font-medium">危急警报</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-red-500">
@@ -66,15 +76,15 @@ const Alerts = () => {
             </div>
             <p className="text-sm text-muted-foreground">
               {alerts.filter(a => a.severity === "critical" && !a.acknowledged).length > 0 
-                ? "Immediate attention required" 
-                : "No critical alerts"}
+                ? "需立即处理" 
+                : "无危急警报"}
             </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium">Warning Alerts</CardTitle>
+            <CardTitle className="text-md font-medium">警告警报</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-yellow-500">
@@ -82,15 +92,15 @@ const Alerts = () => {
             </div>
             <p className="text-sm text-muted-foreground">
               {alerts.filter(a => a.severity === "warning" && !a.acknowledged).length > 0 
-                ? "Attention needed soon" 
-                : "No warning alerts"}
+                ? "需要关注" 
+                : "无警告警报"}
             </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium">Information Alerts</CardTitle>
+            <CardTitle className="text-md font-medium">信息警报</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-500">
@@ -98,8 +108,8 @@ const Alerts = () => {
             </div>
             <p className="text-sm text-muted-foreground">
               {alerts.filter(a => a.severity === "info" && !a.acknowledged).length > 0 
-                ? "For your information" 
-                : "No information alerts"}
+                ? "仅供参考" 
+                : "无信息警报"}
             </p>
           </CardContent>
         </Card>
@@ -107,12 +117,12 @@ const Alerts = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Active Alerts</CardTitle>
+          <CardTitle>活动警报</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {alerts.filter(alert => !alert.acknowledged).length === 0 ? (
-              <p className="text-center py-6 text-muted-foreground">No active alerts</p>
+              <p className="text-center py-6 text-muted-foreground">无活动警报</p>
             ) : (
               alerts
                 .filter(alert => !alert.acknowledged)
@@ -129,7 +139,7 @@ const Alerts = () => {
                           alert.severity === "warning" ? "default" :
                           "secondary"
                         }>
-                          {alert.severity.toUpperCase()}
+                          {getSeverityText(alert.severity)}
                         </Badge>
                         <span className="font-medium">{alert.component}</span>
                       </div>
@@ -143,7 +153,7 @@ const Alerts = () => {
                       size="sm"
                       onClick={() => acknowledgeAlert(alert.id)}
                     >
-                      Acknowledge
+                      确认
                     </Button>
                   </div>
                 ))
