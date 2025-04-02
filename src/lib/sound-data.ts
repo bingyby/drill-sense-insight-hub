@@ -2,6 +2,7 @@
 export interface SoundData {
   soundLevel: number;
   soundStatus: string;
+  waveform: number[]; // Array of values representing the sound waveform
 }
 
 // Sample sound data for monitoring
@@ -16,9 +17,18 @@ export const getSoundData = (): SoundData => {
     ? "异常 (Abnormal)" 
     : "正常 (Normal)";
   
+  // Generate waveform data - 50 points of values between 0-100
+  // Higher sound levels will have more variation in the waveform
+  const variation = randomSound > 85 ? 60 : 30;
+  const baseValue = randomSound > 85 ? 40 : 20;
+  const waveform = Array.from({ length: 50 }, () => 
+    Math.max(5, Math.min(100, baseValue + Math.random() * variation))
+  );
+  
   return {
     soundLevel: randomSound,
-    soundStatus: status
+    soundStatus: status,
+    waveform
   };
 };
 

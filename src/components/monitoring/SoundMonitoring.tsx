@@ -2,11 +2,13 @@
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Volume2, VolumeX } from "lucide-react";
+import { SoundWaveform } from "./SoundWaveform";
 
 interface SoundMonitoringProps {
   data: {
     soundLevel: number;
     soundStatus: string;
+    waveform: number[];
   };
 }
 
@@ -54,6 +56,9 @@ export function SoundMonitoring({ data }: SoundMonitoringProps) {
         <span>85 dB (警戒线/Threshold)</span>
         <span>120 dB (危险/Danger)</span>
       </div>
+
+      {/* Sound waveform visualization */}
+      <SoundWaveform data={data.waveform} soundLevel={data.soundLevel} />
 
       {data.soundLevel > 85 && (
         <Alert variant="destructive" className="mt-4">

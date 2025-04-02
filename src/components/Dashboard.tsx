@@ -41,7 +41,8 @@ const Dashboard = () => {
   // Create properly typed data for sound monitoring
   const soundMonitoringData = {
     soundLevel: soundData.soundLevel,
-    soundStatus: soundData.soundStatus
+    soundStatus: soundData.soundStatus,
+    waveform: soundData.waveform
   };
 
   // Ensure vibrationLevel is a number
