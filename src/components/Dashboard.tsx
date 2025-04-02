@@ -22,6 +22,20 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Ensure the status property is of the correct type
+  const systemStatusData = {
+    ...data.systemStatus,
+    status: data.systemStatus.status as "operational" | "warning" | "critical"
+  };
+
+  // Ensure vibrationLevel is a number
+  const vibrationTemperatureData = {
+    ...data.vibrationTemperature,
+    vibrationLevel: typeof data.vibrationTemperature.vibrationLevel === 'string' 
+      ? parseFloat(data.vibrationTemperature.vibrationLevel) 
+      : data.vibrationTemperature.vibrationLevel
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -30,7 +44,7 @@ const Dashboard = () => {
             <CardTitle className="text-sm font-medium">System Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <SystemStatus data={data.systemStatus} />
+            <SystemStatus data={systemStatusData} />
           </CardContent>
         </Card>
         
@@ -91,7 +105,7 @@ const Dashboard = () => {
         </TabsContent>
         
         <TabsContent value="vibration" className="mt-4">
-          <VibrationTemperature data={data.vibrationTemperature} />
+          <VibrationTemperature data={vibrationTemperatureData} />
         </TabsContent>
         
         <TabsContent value="electrical" className="mt-4">
