@@ -7,16 +7,23 @@ import { ElectricalParameters } from "@/components/monitoring/ElectricalParamete
 import { OperationalCommands } from "@/components/monitoring/OperationalCommands";
 import { EnvironmentalData } from "@/components/monitoring/EnvironmentalData";
 import { SystemStatus } from "@/components/monitoring/SystemStatus";
+import { DefectPredictions } from "@/components/monitoring/DefectPredictions";
+import { SoundMonitoring } from "@/components/monitoring/SoundMonitoring";
 import { useEffect, useState } from "react";
 import { generateMockData } from "@/lib/mock-data";
+import { predictDefects } from "@/lib/defect-predictor";
+import { Activity, AlertTriangle, Gauge, ThermometerSnowflake, Volume2 } from "lucide-react";
 
 const Dashboard = () => {
   const [data, setData] = useState(generateMockData());
+  const [defectPredictions, setDefectPredictions] = useState(predictDefects(data));
   
   // Simulate real-time data updates
   useEffect(() => {
     const interval = setInterval(() => {
-      setData(generateMockData());
+      const newData = generateMockData();
+      setData(newData);
+      setDefectPredictions(predictDefects(newData));
     }, 5000);
     
     return () => clearInterval(interval);
@@ -28,12 +35,14 @@ const Dashboard = () => {
     status: data.systemStatus.status as "operational" | "warning" | "critical"
   };
 
-  // Ensure vibrationLevel is a number
+  // Ensure vibrationLevel is a number and add sound data
   const vibrationTemperatureData = {
     ...data.vibrationTemperature,
     vibrationLevel: typeof data.vibrationTemperature.vibrationLevel === 'string' 
       ? parseFloat(data.vibrationTemperature.vibrationLevel) 
-      : data.vibrationTemperature.vibrationLevel
+      : data.vibrationTemperature.vibrationLevel,
+    soundLevel: data.vibrationTemperature.soundLevel || Math.floor(Math.random() * 20) + 70, // 70-90 dB if not present
+    soundStatus: data.vibrationTemperature.soundStatus || (Math.random() > 0.8 ? "warning" : "normal")
   };
 
   return (
@@ -41,7 +50,10 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">System Status</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center">
+              <Activity className="w-4 h-4 mr-2" />
+              系统状态 (System Status)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <SystemStatus data={systemStatusData} />
@@ -50,54 +62,76 @@ const Dashboard = () => {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Hydraulic Pressure</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center">
+              <Gauge className="w-4 h-4 mr-2" />
+              液压压力 (Hydraulic Pressure)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.hydraulicSystem.pressure} PSI</div>
             <p className="text-xs text-muted-foreground">
               {data.hydraulicSystem.pressureStatus === "normal" 
-                ? "Operating normally" 
-                : "Warning: Pressure irregular"}
+                ? "运行正常 (Operating normally)" 
+                : "警告: 压力异常 (Warning: Pressure irregular)"}
             </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Main Bearing Temp</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center">
+              <ThermometerSnowflake className="w-4 h-4 mr-2" />
+              主轴承温度 (Main Bearing Temp)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.vibrationTemperature.mainBearingTemp}°C</div>
             <p className="text-xs text-muted-foreground">
               {data.vibrationTemperature.mainBearingTempStatus === "normal" 
-                ? "Within normal range" 
-                : "Warning: Temperature elevated"}
+                ? "正常范围内 (Within normal range)" 
+                : "警告: 温度升高 (Warning: Temperature elevated)"}
             </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center">
+              <AlertTriangle className="w-4 h-4 mr-2" />
+              活动警报 (Active Alerts)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{data.alerts.total}</div>
             <p className="text-xs text-muted-foreground">
               {data.alerts.critical > 0 
-                ? `${data.alerts.critical} critical alerts` 
-                : "No critical alerts"}
+                ? `${data.alerts.critical} 个严重警报 (critical alerts)` 
+                : "无严重警报 (No critical alerts)"}
             </p>
           </CardContent>
         </Card>
       </div>
       
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center">
+            <Volume2 className="w-4 h-4 mr-2" />
+            声音监控 (Sound Monitoring)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SoundMonitoring data={vibrationTemperatureData} />
+        </CardContent>
+      </Card>
+      
       <Tabs defaultValue="hydraulic">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
-          <TabsTrigger value="hydraulic">Hydraulic</TabsTrigger>
-          <TabsTrigger value="vibration">Vibration/Temp</TabsTrigger>
-          <TabsTrigger value="electrical">Electrical</TabsTrigger>
-          <TabsTrigger value="operational">Operations</TabsTrigger>
-          <TabsTrigger value="environmental">Environmental</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
+          <TabsTrigger value="hydraulic">液压 (Hydraulic)</TabsTrigger>
+          <TabsTrigger value="vibration">振动/温度 (Vibration/Temp)</TabsTrigger>
+          <TabsTrigger value="electrical">电气 (Electrical)</TabsTrigger>
+          <TabsTrigger value="operational">操作 (Operations)</TabsTrigger>
+          <TabsTrigger value="environmental">环境 (Environmental)</TabsTrigger>
+          <TabsTrigger value="defects">故障预测 (Defect Predictions)</TabsTrigger>
         </TabsList>
         
         <TabsContent value="hydraulic" className="mt-4">
@@ -118,6 +152,10 @@ const Dashboard = () => {
         
         <TabsContent value="environmental" className="mt-4">
           <EnvironmentalData data={data.environmentalData} />
+        </TabsContent>
+        
+        <TabsContent value="defects" className="mt-4">
+          <DefectPredictions predictions={defectPredictions} />
         </TabsContent>
       </Tabs>
     </div>
