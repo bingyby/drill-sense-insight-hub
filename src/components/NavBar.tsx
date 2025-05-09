@@ -2,11 +2,9 @@
 import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleNotification = () => {
     // 导航到警报页面（tabs=alerts）

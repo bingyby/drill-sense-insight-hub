@@ -5,14 +5,13 @@ import DigitalTwin from "@/components/DigitalTwin";
 import Alerts from "@/components/Alerts";
 import HistoricalData from "@/components/HistoricalData";
 import NavBar from "@/components/NavBar";
-import { LayoutDashboard, Activity, Bell, LineChart, Disc3, Volume2, Mail, GitFork } from "lucide-react";
+import { LayoutDashboard, Activity, Bell, LineChart, Disc3, Volume2, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getSoundData, predictDefectsFromSound } from "@/lib/sound-data";
 import { SoundMonitoring } from "@/components/monitoring/SoundMonitoring";
 import { DefectPredictions } from "@/components/monitoring/DefectPredictions";
 import EmailNotifications from "@/components/EmailNotifications";
 import { useIsMobile } from "@/hooks/use-mobile";
-import FaultTree from "@/components/FaultTree";
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -24,7 +23,7 @@ const Index = () => {
     const tabParam = urlParams.get('tabs');
     
     if (tabParam && ["dashboard", "digital-twin", "sound-monitoring", "alerts", 
-                    "historical", "notifications", "fault-tree"].includes(tabParam)) {
+                    "historical", "notifications"].includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, []);
@@ -48,7 +47,7 @@ const Index = () => {
         </header>
         
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className={`grid w-full ${isMobile ? 'grid-cols-4 gap-1' : 'grid-cols-7'} mb-8`}>
+          <TabsList className={`grid w-full ${isMobile ? 'grid-cols-4 gap-1' : 'grid-cols-6'} mb-8`}>
             <TabsTrigger value="dashboard" className="flex items-center justify-center">
               <LayoutDashboard className="h-4 w-4 mr-2" />
               <span>仪表盘</span>
@@ -72,10 +71,6 @@ const Index = () => {
             <TabsTrigger value="notifications" className="flex items-center justify-center">
               <Mail className="h-4 w-4 mr-2" />
               <span>通知设置</span>
-            </TabsTrigger>
-            <TabsTrigger value="fault-tree" className="flex items-center justify-center">
-              <GitFork className="h-4 w-4 mr-2" />
-              <span>故障树</span>
             </TabsTrigger>
           </TabsList>
           
@@ -110,10 +105,6 @@ const Index = () => {
           
           <TabsContent value="notifications">
             <EmailNotifications />
-          </TabsContent>
-          
-          <TabsContent value="fault-tree">
-            <FaultTree />
           </TabsContent>
         </Tabs>
       </div>
