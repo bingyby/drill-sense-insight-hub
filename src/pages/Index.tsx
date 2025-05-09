@@ -42,7 +42,7 @@ const Index = () => {
       <NavBar />
       <div className="container mx-auto px-4 py-8">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-white">北航钻井智能监控系统</h1>
+          <h1 className="text-3xl font-bold text-white">北航钻井智能监控系统 <span className="text-sm font-normal text-cyan-400 ml-2">试运行</span></h1>
           <p className="text-slate-400 mt-2">顶驱钻井故障监控系统</p>
         </header>
         

@@ -11,7 +11,7 @@ const DigitalTwin = () => {
   const [data, setData] = useState(generateMockData());
   const [activeSubTab, setActiveSubTab] = useState("model");
   
-  // Simulate real-time data updates
+  // 模拟实时数据更新
   useEffect(() => {
     const interval = setInterval(() => {
       setData(generateMockData());
@@ -38,7 +38,7 @@ const DigitalTwin = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Wrench className="mr-2 h-5 w-5" />
-                  钻井设备数字孪生 (Top Drive Digital Twin)
+                  钻井设备数字孪生
                 </CardTitle>
               </CardHeader>
               <CardContent>
