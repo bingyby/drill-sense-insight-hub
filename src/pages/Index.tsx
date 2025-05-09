@@ -16,6 +16,27 @@ import FaultTree from "@/components/FaultTree";
 
 const Index = () => {
   const isMobile = useIsMobile();
+  const [activeTab, setActiveTab] = useState("dashboard");
+  
+  useEffect(() => {
+    // 从URL中获取tabs参数，用于直接导航
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tabs');
+    
+    if (tabParam && ["dashboard", "digital-twin", "sound-monitoring", "alerts", 
+                    "historical", "notifications", "fault-tree"].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, []);
+  
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    
+    // 更新URL，方便直接导航
+    const url = new URL(window.location.href);
+    url.searchParams.set("tabs", value);
+    window.history.pushState({}, "", url);
+  };
   
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
@@ -26,7 +47,7 @@ const Index = () => {
           <p className="text-slate-400 mt-2">顶驱钻井故障监控系统</p>
         </header>
         
-        <Tabs defaultValue="dashboard" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className={`grid w-full ${isMobile ? 'grid-cols-4 gap-1' : 'grid-cols-7'} mb-8`}>
             <TabsTrigger value="dashboard" className="flex items-center justify-center">
               <LayoutDashboard className="h-4 w-4 mr-2" />

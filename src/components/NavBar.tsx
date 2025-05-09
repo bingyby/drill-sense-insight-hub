@@ -2,21 +2,21 @@
 import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleNotification = () => {
-    toast({
-      title: "Notifications",
-      description: "You have 3 unread alerts that require attention",
-    });
+    // 导航到警报页面（tabs=alerts）
+    window.location.href = "/?tabs=alerts";
   };
   
   const handleSettings = () => {
     toast({
-      title: "Settings",
-      description: "System settings panel will be available in the next update",
+      title: "设置",
+      description: "系统设置面板将在下一个版本中提供",
     });
   };
 
