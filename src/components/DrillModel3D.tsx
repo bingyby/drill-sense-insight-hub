@@ -266,11 +266,6 @@ const DrillModel3D = ({ data }: DrillModelProps) => {
     const topDrive = createDetailedTopDrive();
     modelsRef.current.topDrive = topDrive;
     drillRig.add(topDrive);
-    
-    // Create drill pipe with dynamic segments
-    const drillPipe = createDetailedDrillPipe();
-    modelsRef.current.drillPipe = drillPipe;
-    drillRig.add(drillPipe);
 
     // Create drawworks (绞车) with more detail
     const drawworks = createDetailedDrawworks();
@@ -433,59 +428,6 @@ const DrillModel3D = ({ data }: DrillModelProps) => {
     return topDrive;
   };
   
-  // Create detailed drill pipe with segments
-  const createDetailedDrillPipe = () => {
-    const drillPipe = new THREE.Group();
-    
-    // Create multiple pipe segments
-    const pipeSegments = 10;
-    const segmentHeight = 1;
-    const pipeRadius = 0.25;
-    
-    const pipeGeometry = new THREE.CylinderGeometry(pipeRadius, pipeRadius, segmentHeight, 16);
-    const pipeMaterial = new THREE.MeshStandardMaterial({ 
-      color: 0xaaaaaa,
-      roughness: 0.5,
-      metalness: 0.8
-    });
-    
-    for (let i = 0; i < pipeSegments; i++) {
-      const segment = new THREE.Mesh(pipeGeometry, pipeMaterial);
-      segment.position.y = 11 - i * segmentHeight;
-      segment.castShadow = true;
-      drillPipe.add(segment);
-      
-      // Add connection joint (tool joint) between segments
-      if (i > 0 && i < pipeSegments) {
-        const jointGeometry = new THREE.CylinderGeometry(pipeRadius * 1.5, pipeRadius * 1.5, 0.2, 16);
-        const jointMaterial = new THREE.MeshStandardMaterial({
-          color: 0x666666,
-          roughness: 0.5,
-          metalness: 0.9
-        });
-        const joint = new THREE.Mesh(jointGeometry, jointMaterial);
-        joint.position.y = 11.5 - i * segmentHeight;
-        joint.castShadow = true;
-        drillPipe.add(joint);
-      }
-    }
-    
-    // Add drill bit at the bottom
-    const bitGeometry = new THREE.ConeGeometry(0.8, 1, 16);
-    const bitMaterial = new THREE.MeshStandardMaterial({
-      color: 0x444444,
-      roughness: 0.3,
-      metalness: 0.9
-    });
-    const bit = new THREE.Mesh(bitGeometry, bitMaterial);
-    bit.position.y = 11 - pipeSegments * segmentHeight - 0.5;
-    bit.rotation.x = Math.PI;
-    bit.castShadow = true;
-    drillPipe.add(bit);
-    
-    return drillPipe;
-  };
-  
   // Create detailed drawworks
   const createDetailedDrawworks = () => {
     const drawworks = new THREE.Group();
@@ -526,18 +468,6 @@ const DrillModel3D = ({ data }: DrillModelProps) => {
     panel.position.set(-3, 0.5, -1);
     panel.castShadow = true;
     drawworks.add(panel);
-    
-    // Add wire rope system
-    const wireGeometry = new THREE.CylinderGeometry(0.05, 0.05, 20, 8);
-    const wireMaterial = new THREE.MeshStandardMaterial({
-      color: 0x111111,
-      roughness: 0.4,
-      metalness: 0.8
-    });
-    const wire = new THREE.Mesh(wireGeometry, wireMaterial);
-    wire.position.set(-5, 10, 0);
-    wire.rotation.x = Math.PI/2;
-    drawworks.add(wire);
     
     return drawworks;
   };
@@ -583,26 +513,6 @@ const DrillModel3D = ({ data }: DrillModelProps) => {
     fluidEnd.position.set(5, 1, 6);
     fluidEnd.castShadow = true;
     mudPump.add(fluidEnd);
-    
-    // Add pipes
-    const pipeGeometry = new THREE.CylinderGeometry(0.2, 0.2, 4, 16);
-    const pipeMaterial = new THREE.MeshStandardMaterial({
-      color: 0x888888,
-      roughness: 0.5,
-      metalness: 0.7
-    });
-    
-    const pipe1 = new THREE.Mesh(pipeGeometry, pipeMaterial);
-    pipe1.position.set(5, 2.5, 5);
-    pipe1.rotation.x = Math.PI/2;
-    pipe1.castShadow = true;
-    mudPump.add(pipe1);
-    
-    const pipe2 = new THREE.Mesh(pipeGeometry, pipeMaterial);
-    pipe2.position.set(6, 1, 4);
-    pipe2.rotation.z = Math.PI/2;
-    pipe2.castShadow = true;
-    mudPump.add(pipe2);
     
     return mudPump;
   };
@@ -868,24 +778,24 @@ const DrillModel3D = ({ data }: DrillModelProps) => {
     <div className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-[400px] rounded-lg overflow-hidden"></div>
       <div className="absolute top-2 left-2 bg-black/70 p-2 rounded-md text-xs">
-        <p className="text-white">旋转查看 3D 模型 (Rotate to view 3D model)</p>
+        <p className="text-white">旋转查看 3D 模型</p>
       </div>
       <div className="absolute bottom-2 right-2 grid grid-cols-2 gap-2 bg-black/70 p-2 rounded-md text-xs">
         <div className="flex items-center">
           <div className={`w-3 h-3 rounded-full mr-1 ${data.motorStatus ? 'bg-green-500' : 'bg-red-500'}`}></div>
-          <span className="text-white">顶驱 (Top Drive)</span>
+          <span className="text-white">顶驱</span>
         </div>
         <div className="flex items-center">
           <div className={`w-3 h-3 rounded-full mr-1 ${data.hydraulicPressure > 3000 ? 'bg-red-500' : 'bg-green-500'}`}></div>
-          <span className="text-white">泥浆泵 (Mud Pump)</span>
+          <span className="text-white">泥浆泵</span>
         </div>
         <div className="flex items-center">
           <div className={`w-3 h-3 rounded-full mr-1 ${data.vibrationLevel > 5.0 ? 'bg-red-500' : 'bg-green-500'}`}></div>
-          <span className="text-white">井架 (Derrick)</span>
+          <span className="text-white">井架</span>
         </div>
         <div className="flex items-center">
           <div className={`w-3 h-3 rounded-full mr-1 ${data.mainBearingTemp > 80 ? 'bg-red-500' : 'bg-green-500'}`}></div>
-          <span className="text-white">轴承温度 (Bearing Temp)</span>
+          <span className="text-white">轴承温度</span>
         </div>
       </div>
     </div>
